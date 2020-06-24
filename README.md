@@ -1,5 +1,5 @@
 # Stilson's Moog Filter (JUCE) 
-A C++ class implementing Stilson's Moog Filter. Built within/for the JUCE framework.
+A C++ class implementing Tim Stilson's Moog Filter. Built within/for the JUCE framework.
 
 ## Info
 This is an entire JUCE project was built around testing the filter. The relevant files are StilsonMoogFilter.h and StilsonMoogFilter.cpp
