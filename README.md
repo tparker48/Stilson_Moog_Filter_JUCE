@@ -9,7 +9,9 @@ A C++ class implementing Stilson's Moog Filter. Built within/for the JUCE framew
   
 - Running the test/example application would require a JUCE installation on your machine
 - Adding the filter to your project is as simple as dragging StilsonMoogFilter.h and StilsonMoogFilter.cpp into your own JUCE project via Projucer
-- The usage is straighforward and can be seen in the MainComponent.h and MainComponent.cpp code.
+
+## Usage
+The usage is straighforward and can be seen in the MainComponent.h and MainComponent.cpp code.
 - init(float sampleRate) must be called before you start using the filter
 - setCutoff(float cutoff) adjusts the filter cutoff frequency
 - setResonance(float resonance) adjusts the resonance (ranges from 0.0 to 1.0 inclusive)
