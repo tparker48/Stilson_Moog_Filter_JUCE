@@ -9,6 +9,7 @@ This is an entire JUCE project was built around testing the filter. The relevant
   
 - Building the test/example application would require a JUCE installation on your machine
 - Adding the filter to your project is as simple as dragging StilsonMoogFilter.h and StilsonMoogFilter.cpp into your own JUCE project via Projucer
+- Note: currently implemented for single channel only
 
 ## Usage
 The usage is straighforward and can be seen in the MainComponent.h and MainComponent.cpp code.
