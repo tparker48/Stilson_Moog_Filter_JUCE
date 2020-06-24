@@ -17,5 +17,5 @@ The usage is straighforward and can be seen in the MainComponent.h and MainCompo
 - setResonance(float resonance) adjusts the resonance (ranges from 0.0 to 1.0 inclusive)
 - setSaturationAmount(float saturationAmount) adjusts amount of saturation (ranges from 0.0 to 1.0 inclusive)
 - processBlock(const AudioSourceChannelInfo& bufferToFill, int passMode) applies the filter to the samples in bufferToFill
- - passMode = 0 for Lowpass, 1 for Highpass, and 2 for Bandpass
+   - passMode = 0 for Lowpass, 1 for Highpass, and 2 for Bandpass
 
