@@ -1,6 +1,5 @@
 # Stilson's Moog Filter (JUCE) 
-A C++ class implementing Tim Stilson's Moog Filter. Built within/for the JUCE framework.
-- Note: I've added a few other filters here as well. My favorite is the MoogFilterII, which is also based on the work of Tim Stilson.
+A collection of C++ classes implementing various filters. Built within/for the JUCE framework.
 
 ## Filters Currently Added:
 1. Stilson's Moog Filter (https://www.musicdsp.org/en/latest/Filters/145-stilson-s-moog-filter-code.html)
