@@ -106,7 +106,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
         moog1.processBlock(bufferToFill);
         break;
     case MOOG_FILTER_2:
-        moog2.processBlock(bufferToFill);
+        moog2.processBlock(bufferToFill, LOWPASS);
         break;
     case BUTTERWORTH_FILTER:
         butterworth.processBlock(bufferToFill);
