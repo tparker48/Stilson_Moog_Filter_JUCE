@@ -2,10 +2,10 @@
 
 MainComponent::MainComponent()
 {
-    setSize (300, 400);
-
+    setSize (600, 400);
+    
     filterCutoff.setSliderStyle(Slider::LinearBarVertical);
-    filterCutoff.setRange(50.0, 4800.0, 1.0);
+    filterCutoff.setRange(50.0, MAX_CUTOFF_FREQ, 1.0);
     filterCutoff.setSkewFactorFromMidPoint(1000);
     filterCutoff.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     filterCutoff.setPopupDisplayEnabled(true, false, this);
@@ -25,7 +25,7 @@ MainComponent::MainComponent()
     saturation.setRange(0.0, 1.0, 0.01);
     saturation.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     saturation.setPopupDisplayEnabled(true, false, this);
-    saturation.setTextValueSuffix(" filter saturation amount");
+    saturation.setTextValueSuffix(" saturation (stilson only)");
     saturation.setValue(.3);
     addAndMakeVisible(&saturation);
 
@@ -78,7 +78,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     moog1.setCutoff(cutoff);
     moog1.setRes(res);
 
-    moog2.init();
+    moog2.init((float)sampleRate);
     moog2.set(cutoff, res);
 
     filterMode = NO_FILTER;
@@ -149,5 +149,5 @@ void MainComponent::resized()
     filterCutoff.setBounds(40, 30, 40, getHeight() - 60);
     filterRes.setBounds(90, 30, 40, getHeight() - 60);
     saturation.setBounds(140, 30, 40, getHeight() - 60);
-    filterSelect.setBounds(180, 50, 100, 20);
+    filterSelect.setBounds(240, 50, 100, 20);
 }

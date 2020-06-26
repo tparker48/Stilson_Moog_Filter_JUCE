@@ -11,12 +11,13 @@ Comes from a Stilson/Smith CCRMA paper
 class MoogFilterII
 {
 public:
-	void init();
+	void init(float sampleRate);
 	void set(float cutoff, float resonance);
 	float processSample(float in);
 	void processBlock(const AudioSourceChannelInfo& bufferToFill);
 
 private:
+    float sampleRate;
 	float cutoff, resonance;
 	float out1, out2, out3, out4;
 	float in1, in2, in3, in4;

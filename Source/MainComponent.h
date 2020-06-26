@@ -30,21 +30,23 @@ public:
 private:
     DumbSquare sqOsc1, sqOsc2;
 
-    int filterMode;
-
     StilsonMoogFilter stilson;
     MoogFilterI moog1;
     MoogFilterII moog2;
     ButterworthFilter butterworth;
     IIRFilter juceFilter;
-
+    
+    const float MAX_CUTOFF_FREQ = 5000.0;
+    
+    // Filter Parameters
+    int filterMode;
     int filterSelection;
     float cutoff, res, sat;
 
+    // GUI
     Slider filterCutoff;
     Slider filterRes;
     Slider saturation;
-
     ComboBox filterSelect;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
