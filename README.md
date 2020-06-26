@@ -1,15 +1,19 @@
 # Stilson's Moog Filter (JUCE) 
 A C++ class implementing Tim Stilson's Moog Filter. Built within/for the JUCE framework.
+- Note: I've added a few other filters here as well. My favorite is the MoogFilterII, which is also based on the work of Tim Stilson.
+
+## Filters Currently Added:
+1. Stilson's Moog Filter (https://www.musicdsp.org/en/latest/Filters/145-stilson-s-moog-filter-code.html)
+2. Moog Filter 1 (https://www.musicdsp.org/en/latest/Filters/24-moog-vcf.html)
+3. Moog Filter 2 (https://www.musicdsp.org/en/latest/Filters/26-moog-vcf-variation-2.html)
+4. Butterworth Filter (https://www.musicdsp.org/en/latest/Filters/243-butterworth-optimized-c-class.html)
 
 ## Info
-The JUCE project in this repo was built around testing the filter. The relevant files are StilsonMoogFilter.h and StilsonMoogFilter.cpp
-
-- The code for the filter was based on the following post from musicdsp.org :
-  - https://www.musicdsp.org/en/latest/Filters/145-stilson-s-moog-filter-code.html
+The JUCE project in this repo was built around testing the filters. Adding a particular filter to your own project only requires the .h and .cpp files corresponding to that filter.
   
-- Building the test/example application would require a JUCE installation on your machine
-- Adding the filter to your project is as simple as dragging StilsonMoogFilter.h and StilsonMoogFilter.cpp into your own JUCE project via Projucer
-- Note: implemented for single channel only
+- Building the test/example application requires a JUCE installation on your machine
+- Adding the filter to your project is as simple as dragging <Filter Name>.h and <Filter Name>.cpp into your own JUCE project via Projucer
+- Note: implemented for single channel (mono) only. The processBlock functions will filter channel 0 of the given AudioSampleBuffer.
 
 ## Usage
 The usage is straighforward and can be seen in the MainComponent.h and MainComponent.cpp code.
