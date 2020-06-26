@@ -3,6 +3,15 @@
 <JUCERPROJECT id="SUrkA7" name="Filters" projectType="guiapp" jucerVersion="5.4.7">
   <MAINGROUP id="j9XUQq" name="Filters">
     <GROUP id="{5C6945D3-76F7-9664-C23A-167586650209}" name="Source">
+      <FILE id="VsRf9K" name="MoogFilterI.cpp" compile="1" resource="0" file="Source/MoogFilterI.cpp"/>
+      <FILE id="v2mK1N" name="MoogFilterI.h" compile="0" resource="0" file="Source/MoogFilterI.h"/>
+      <FILE id="Yj2RhU" name="MoogFilterII.cpp" compile="1" resource="0"
+            file="Source/MoogFilterII.cpp"/>
+      <FILE id="DDOjy0" name="MoogFilterII.h" compile="0" resource="0" file="Source/MoogFilterII.h"/>
+      <FILE id="aXoViJ" name="ButterworthFilter.cpp" compile="1" resource="0"
+            file="Source/ButterworthFilter.cpp"/>
+      <FILE id="gGSljb" name="ButterworthFilter.h" compile="0" resource="0"
+            file="Source/ButterworthFilter.h"/>
       <FILE id="ys3iZG" name="StilsonMoogFilter.cpp" compile="1" resource="0"
             file="Source/StilsonMoogFilter.cpp"/>
       <FILE id="WCOsLi" name="StilsonMoogFilter.h" compile="0" resource="0"

@@ -5,7 +5,7 @@ MainComponent::MainComponent()
     setSize (300, 400);
 
     filterCutoff.setSliderStyle(Slider::LinearBarVertical);
-    filterCutoff.setRange(50.0, 4000.0, 1.0);
+    filterCutoff.setRange(50.0, 4800.0, 1.0);
     filterCutoff.setSkewFactorFromMidPoint(1000);
     filterCutoff.setTextBoxStyle(Slider::NoTextBox, false, 90, 0);
     filterCutoff.setPopupDisplayEnabled(true, false, this);
@@ -28,6 +28,15 @@ MainComponent::MainComponent()
     saturation.setTextValueSuffix(" filter saturation amount");
     saturation.setValue(.3);
     addAndMakeVisible(&saturation);
+
+    addAndMakeVisible(filterSelect);
+    filterSelect.addItem("No Filter (Loud)", NO_FILTER);
+    filterSelect.addItem("Default JUCE Filter", JUCE_FILTER);
+    filterSelect.addItem("Stilson Moog Filter", STILSON_MOOG_FILTER);
+    filterSelect.addItem("Moog Filter 1", MOOG_FILTER_1);
+    filterSelect.addItem("Moog Filter 2", MOOG_FILTER_2);
+    filterSelect.addItem("Butterworth Filter", BUTTERWORTH_FILTER);
+    filterSelect.setSelectedId(JUCE_FILTER);
 
     if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
         && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
@@ -61,9 +70,18 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     stilson.init((float)sampleRate);
     stilson.setCutoff(cutoff);
     stilson.setResonance(1.0);
-    stilson.setSaturationAmount(1.0);
+    stilson.setSaturationAmount(0.5);
 
-    filterMode = STILSON_MOOG_FILTER;
+    butterworth.SetSampleRate((float)sampleRate);
+
+    moog1.init();
+    moog1.setCutoff(cutoff);
+    moog1.setRes(res);
+
+    moog2.init();
+    moog2.set(cutoff, res);
+
+    filterMode = NO_FILTER;
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
@@ -73,6 +91,8 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     sqOsc1.fillBlock(bufferToFill);
     sqOsc2.fillBlock(bufferToFill);
 
+    filterMode = filterSelect.getSelectedId();
+
     // filter using specified mode
     switch (filterMode)
     {
@@ -80,7 +100,16 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
         juceFilter.processSamples(bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample), bufferToFill.buffer->getNumSamples());
         break;
     case STILSON_MOOG_FILTER:
-        stilson.processBlock(bufferToFill, BANDPASS);
+        stilson.processBlock(bufferToFill, LOWPASS);
+        break;
+    case MOOG_FILTER_1:
+        moog1.processBlock(bufferToFill);
+        break;
+    case MOOG_FILTER_2:
+        moog2.processBlock(bufferToFill);
+        break;
+    case BUTTERWORTH_FILTER:
+        butterworth.processBlock(bufferToFill);
         break;
     default:
         break;
@@ -95,6 +124,10 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     stilson.setCutoff(cutoff);
     stilson.setResonance(res);
     stilson.setSaturationAmount(sat);
+    moog1.setCutoff(cutoff);
+    moog1.setRes(res);
+    moog2.set(cutoff, res);
+    butterworth.Set(cutoff, res);
     juceFilter.setCoefficients(IIRCoefficients::makeLowPass(44100, cutoff, res));
 }
 
@@ -116,4 +149,5 @@ void MainComponent::resized()
     filterCutoff.setBounds(40, 30, 40, getHeight() - 60);
     filterRes.setBounds(90, 30, 40, getHeight() - 60);
     saturation.setBounds(140, 30, 40, getHeight() - 60);
+    filterSelect.setBounds(180, 50, 100, 20);
 }
