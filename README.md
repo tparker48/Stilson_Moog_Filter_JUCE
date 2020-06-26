@@ -15,7 +15,7 @@ The JUCE project in this repo was built around testing the filters. Adding a par
 - Adding the filter to your project is as simple as dragging <Filter Name>.h and <Filter Name>.cpp into your own JUCE project via Projucer
 - Note: implemented for single channel (mono) only. The processBlock functions will filter channel 0 of the given AudioSampleBuffer.
 
-## Usage
+## Usage (Stilson Moog Filter)
 The usage is straighforward and can be seen in the MainComponent.h and MainComponent.cpp code.
 - init(float sampleRate) must be called before you start using the filter
 - setCutoff(float cutoff) adjusts the filter cutoff frequency
@@ -24,3 +24,6 @@ The usage is straighforward and can be seen in the MainComponent.h and MainCompo
 - processBlock(const AudioSourceChannelInfo& bufferToFill, int passMode) applies the filter to the samples in bufferToFill
    - passMode = 0 for Lowpass, 1 for Highpass, and 2 for Bandpass
 
+The other filters have very similair APIs. Looking at the respective header files should reveal how to initialize, set cutoff frequency, resonance, etc.
+
+The usage for each filter is demonstrated in MainComponent.cpp .
