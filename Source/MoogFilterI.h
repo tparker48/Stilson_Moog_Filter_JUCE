@@ -1,41 +1,54 @@
 /*
-This code taken from the following post:
+The following code was taken from the following post:
 https://www.musicdsp.org/en/latest/Filters/24-moog-vcf.html
 
-More specifically, the comment by moc.erehwon@tsaot, at 2007-02-05 17:22:24
-which provided a C++ adaptation of the original post.
+A C++ class implementation of the filter was posted as a comment by moc.erehwon@tsaot.
 
-Other than adding the processBlock function, the original code was unchanged
+That class was revised and added to for this implementation:
+ - several variable names were changed for better readability
+ - The processBlock function was added for easy use in JUCE projects.
+ - Highpass and Bandpass filtering have been added as options
+ - A saturation effect was applied. 
+   (adapted from the saturation function in the StilsonMoogFilter class)
 */
+
 
 #pragma once
 #include <JuceHeader.h>
 
+#define LOWPASS 0
+#define HIGHPASS 1
+#define BANDPASS 2
+
 class MoogFilterI
 {
 public:
-	MoogFilterI();
-	void init();
-	void calc();
-	float process(float x);
-	void processBlock(const AudioSourceChannelInfo& bufferToFill);
-	~MoogFilterI();
-	float getCutoff();
-	void setCutoff(float c);
-	float getRes();
-	void setRes(float r);
+	void init(float sampleRate);
+	
+	void setCutoff(float cutoff);
+	void setResonance(float resonance);
+	
+	// saturationAmount ranges [0..1] and is a dry/wet ratio
+	// 0.0 will effectively turn off the saturation
+	void setSaturation(float saturationAmount);
 
-protected:
+	void processBlock(const AudioSourceChannelInfo& bufferToFill, int passMode);
+
+private:
+	void calculateCoefficients();
+	float process(float x, int passMode);
 	float saturate(float input);
 
 	float cutoff;
-	float res;
-	float fs;
-	float y1, y2, y3, y4;
-	float oldx;
-	float oldy1, oldy2, oldy3;
-	float x;
-	float r;
-	float p;
-	float k;
+	float resonance;
+	float saturationAmount;
+	
+	float sampleRate;
+	float out1, out2, out3, out4;
+	float in1, in2, in3, in4;
+
+	// coefficients determined by cutoff and resonance
+	float r, p, k;
+
+	const float saturationLimit = 0.95;
 };

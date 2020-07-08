@@ -74,9 +74,9 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
     butterworth.SetSampleRate((float)sampleRate);
 
-    moog1.init();
+    moog1.init((float)sampleRate);
     moog1.setCutoff(cutoff);
-    moog1.setRes(res);
+    moog1.setResonance(res);
 
     moog2.init((float)sampleRate);
     moog2.set(cutoff, res);
@@ -103,7 +103,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
         stilson.processBlock(bufferToFill, LOWPASS);
         break;
     case MOOG_FILTER_1:
-        moog1.processBlock(bufferToFill);
+        moog1.processBlock(bufferToFill, LOWPASS);
         break;
     case MOOG_FILTER_2:
         moog2.processBlock(bufferToFill, LOWPASS);
@@ -125,7 +125,8 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     stilson.setResonance(res);
     stilson.setSaturationAmount(sat);
     moog1.setCutoff(cutoff);
-    moog1.setRes(res);
+    moog1.setResonance(res);
+    moog1.setSaturation(sat);
     moog2.set(cutoff, res);
     butterworth.Set(cutoff, res);
     juceFilter.setCoefficients(IIRCoefficients::makeLowPass(44100, cutoff, res));

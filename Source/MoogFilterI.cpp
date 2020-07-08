@@ -1,63 +1,52 @@
 /*
-This code taken from the following post:
+The following code was taken from the following post:
 https://www.musicdsp.org/en/latest/Filters/24-moog-vcf.html
 
-More specifically, the comment by moc.erehwon@tsaot, at 2007-02-05 17:22:24
-which provided a C++ adaptation of the original post.
+A C++ class implementation of the filter was posted as a comment by moc.erehwon@tsaot.
 
-Other than adding the processBlock function, the original code was unchanged
+That class was revised and added to for this implementation:
+
+ - The processBlock function was added for easy use in JUCE projects.
+ - Highpass and Bandpass filtering have been added as options
+ - A saturation effect (originaly found in the StilsonMoogFilter class)
+   was applied.
 */
 
 #include "MoogFilterI.h"
 
-MoogFilterI::MoogFilterI()
+void MoogFilterI::init(float sampleRate)
 {
-	fs = 44100.0;
+	this->sampleRate = sampleRate;
 
-	init();
-}
-
-MoogFilterI::~MoogFilterI()
-{
-}
-
-void MoogFilterI::init()
-{
-	// initialize values
-	y1 = y2 = y3 = y4 = oldx = oldy1 = oldy2 = oldy3 = 0;
-	calc();
+	out1 = out2 = out3 = out4 = 0.0f;
+	in1 = in2 = in3 = in4 = 0.0f;
+	calculateCoefficients();
 };
 
-void MoogFilterI::calc()
+void MoogFilterI::setCutoff(float cutoff)
 {
-	float f = (cutoff + cutoff) / fs; //[0 - 1]
-	p = f * (1.8f - 0.8f * f);
-	k = p + p - 1.f;
-
-	float t = (1.f - p) * 1.386249f;
-	float t2 = 12.f + t * t;
-	r = res * (t2 + 6.f * t) / (t2 - 6.f * t);
-};
-
-float MoogFilterI::process(float input)
-{
-	// process input
-	x = input - r * y4;
-
-	//Four cascaded onepole filters (bilinear transform)
-	y1 = x * p + oldx * p - k * y1;
-	y2 = y1 * p + oldy1 * p - k * y2;
-	y3 = y2 * p + oldy2 * p - k * y3;
-	y4 = y3 * p + oldy3 * p - k * y4;
-
-	//Clipper band limited sigmoid
-	y4 -= (y4 * y4 * y4) / 6.f;
-
-	oldx = x; oldy1 = y1; oldy2 = y2; oldy3 = y3;
-	return y4;
+	this->cutoff = cutoff;
+	calculateCoefficients();
 }
 
-void MoogFilterI::processBlock(const AudioSourceChannelInfo& bufferToFill)
+void MoogFilterI::setResonance(float resonance)
+{
+	if (resonance >= 0.0 && resonance <= 1.0)
+	{
+		this->resonance = resonance;
+		calculateCoefficients();
+	}
+}
+
+void MoogFilterI::setSaturation(float saturationAmount)
+{
+	if (saturationAmount >= 0.0 && saturationAmount <= 1.0)
+	{
+		this->saturationAmount = saturationAmount;
+	}
+}
+
+void MoogFilterI::processBlock(const AudioSourceChannelInfo& bufferToFill, int passMode)
 {
 	int startSample = bufferToFill.startSample;
 	int numSamples = bufferToFill.numSamples;
@@ -65,26 +54,65 @@ void MoogFilterI::processBlock(const AudioSourceChannelInfo& bufferToFill)
 
 	for (int s = 0; s < numSamples; s++)
 	{
-		buffer->setSample(0, startSample + s, process(buffer->getSample(0, startSample + s)));
+		buffer->setSample(0, startSample + s, process(buffer->getSample(0, startSample + s), passMode));
 	}
 }
 
-float MoogFilterI::getCutoff()
+void MoogFilterI::calculateCoefficients()
 {
-	return cutoff;
+	float f = (cutoff + cutoff) / this->sampleRate;
+	p = f * (1.8f - 0.8f * f);
+	k = p + p - 1.f;
+
+	float t = (1.f - p) * 1.386249f;
+	float t2 = 12.f + t * t;
+	r = resonance * (t2 + 6.f * t) / (t2 - 6.f * t);
+};
+
+float MoogFilterI::process(float input, int passMode)
+{
+	// process input
+	input = saturate(input);
+	input -= r * out4;
+
+	//Four cascaded onepole filters (bilinear transform)
+	out1 = input * p + in1 * p - k * out1;
+	out2 =  out1 * p + in2 * p - k * out2;
+	out3 =  out2 * p + in1 * p - k * out3;
+	out4 =  out3 * p + in4 * p - k * out4;
+
+	in1 = input;
+	in2 = out1;
+	in3 = out2;
+	in4 = out3;
+
+	//Clipper band limited sigmoid
+	out4 -= (out4 * out4 * out4) / 6.f;
+
+	switch (passMode)
+	{
+	case LOWPASS:
+		return out4;
+		break;
+	case HIGHPASS:
+		return input - out4 - out1;
+		break;
+	case BANDPASS:
+		return out4 - out1;
+		break;
+	default:
+		return out4;
+	}
 }
 
-void MoogFilterI::setCutoff(float c)
+float MoogFilterI::saturate(float input)
 {
-	cutoff = c; calc();
-}
+	float drySignal = input;
+	input *= 1.5f;
 
-float MoogFilterI::getRes()
-{
-	return res;
-}
-
-void MoogFilterI::setRes(float r)
-{
-	res = r; calc();
+	float x1 = fabsf(input + saturationLimit);
+	float x2 = fabsf(input - saturationLimit);
+	float wetSignal = (0.5f * (x1 - x2));
+	
+	return (wetSignal * saturationAmount) + (drySignal * (1.0f - saturationAmount));
 }
